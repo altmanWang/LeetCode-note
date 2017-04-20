@@ -1,0 +1,172 @@
+﻿Given inorder and postorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+
+给定中序遍历和后序遍历，重新构建二叉树
+
+
+例子：
+
+```
+                				1-A
+        		2-B		            		3-C
+    	4-D	    	5-E	    11-K	        		6-F
+7-G	    	8-H		            		9-I
+                                						10-J
+```
+
+
+
+中序遍历：
+7,4,8,2,5,1,11,3,9,10,6
+
+后序遍历：
+7,8,4,5,2,11,10,9,6,3,1
+
+
+最后采用先序遍历来验证.
+
+先序遍历：
+1 2 4 7 8 5 3 11 6 9 10
+
+
+### 思路
+先验只是，后序遍历的最后一个肯定是该层的根节点。
+中序遍历中该节点的左侧都是左子树，右侧都是右子树。
+
+每一次从后序遍历中选择最后一个节点作为根节点，
+并且根据该节点在中序遍历中的位置，对中序遍历和后序遍历分割。各分为左子树和右子树。
+分割规则如下：
+
+left
+- post_start = post_start                             
+- post_end = post_start  + (index-in_start)-1   
+
+- in_start = in_start                            
+- in_end = index-1                               
+
+right
+- post_start = post_start + (index-in_start)    
+- post_end = post_end - 1                       
+
+- in_start = index + 1                          
+- in_end = in_end                               
+
+构建节点规则如下：
+- 根节点的左节点=左子树后序遍历的最后一个节点
+- 根节点的右节点=右子树后序遍历的最后一个节点
+- 
+特别注意：
+当出现起始位置大于终止位置时，即越界。不进行构造节点。
+
+
+### 伪代码
+
+```
+Step1. 选择节点node
+Step2. 分割(左子树，右子树 )
+Step3. 
+if(in_start <= in_end)
+    node.left = 递归左子树
+        if(post_start <= post_end)
+            node.right = 递归右子树
+Step4：return node
+```
+
+
+###### 手稿如下
+
+```
+0 1 2 3 4 5 6 7 8 9 10                 A 
+G D H B E A K C I J F                  
+G H D E B K J I F C A
+
+1.
+0                   10
+G D H B E A K C I J F                  
+G H D E B K J I F C A          
+        
+index = 5
+
+left
+
+post_start = post_start                       0        
+post_end = post_start  + (index-in_start)-1   4
+
+in_start = in_start                            0
+in_end = index-1                               4
+
+right
+post_start = post_start + (index-in_start)    5
+post_end = post_end - 1                       9
+
+in_start = index + 1                          6
+in_end = in_end                               10
+
+
+
+A
+0       4     6       10
+0       4     5        9
+G D H B E     K C I J F
+G H D E B     K J I F C
+A.left = method()
+A.right = method()
+return A
+
+             5 5  
+             6 8
+
+             6 6
+             8 10
+
+
+2.
+index = 3
+
+
+A.left = method()                    A.right = method()
+  6
+G D H B E                             K C I J F   
+G H D E B                             K J I F C
+
+
+                                      
+G D H 	E                             K   I J F
+G H D 	E                             K   J I F
+
+0   2   3 3
+0   2   4 4
+
+
+
+B.left = method()                     C.left = method()
+B.right = method()                    C.right = method()
+return B                              return C
+3.                                   3.
+if(size==1)                          
+   return node
+4.   
+0   2                                  8   10
+G D H                                  I J F
+                                       6   8
+G H D                                  J I F
+
+0 0 1 1                                  6 7
+0 0 2 2                                  7 8     越界
+ 
+                                       8 9
+                                         10 11   越界
+                                       
+   8 9
+   I J
+   6 7
+   J I
+   
+   6 6        
+     7 6        越界
+```
+
+
