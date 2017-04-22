@@ -25,7 +25,6 @@ public class Solution {
             return null;
 
         int index = (int)(end-start)/2+start;
-        System.out.println(start+" "+end+" "+index);
 
         TreeNode node = new TreeNode(nums[index]);
         node.left = sortedArrayToBST(nums, start, index-1);
